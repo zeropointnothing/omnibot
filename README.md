@@ -1,5 +1,5 @@
 # omnibot
-![funny gif](https://media1.tenor.com/m/NpxX43CMKcsAAAAd/omni-man-omni-man-are-you-sure.gif)
+![omni man are you sure gif](https://github.com/user-attachments/assets/aa366078-f3ec-4731-a58f-fc2f6f2d0e91)
 
 Silly meme bot made for April Fools. (also a test of PyCord's class based bot approach)
 
