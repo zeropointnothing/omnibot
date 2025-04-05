@@ -39,12 +39,13 @@ class OmniBot(commands.Bot):
 
     async def on_ready(self):
         print(f'Logged on as {self.user}!')
+        print(self.prefixed_commands)
 
     async def on_message(self, message: Message):
         # print(f'Message from {message.author}: {message.content}')
         ctx: commands.Context = await self.get_context(message)
 
-        if not message.author.bot and not message.is_system() and not ctx.valid:
+        if (not message.author.bot and not message.is_system()) and not message.content.startswith(self.command_prefix):
             replynum = random.randint(self.rand_floor, self.rand_ceiling) # random trigger
             # meme trigger
             is_meme = any([are_strings_similar(_, message.content) for _ in self.always_replies])
