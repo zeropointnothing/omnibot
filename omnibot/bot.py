@@ -1,26 +1,7 @@
-import json
-import discord
 import discord.ext.commands as commands
 import random
-from dataclasses import dataclass
-from enum import Enum, auto
-from difflib import SequenceMatcher
 from discord import Message
-
-class ReplyType(Enum):
-    MESSAGE = auto()
-    GIF = auto()
-
-@dataclass
-class Reply:
-    # def __init__(self, reply_type: ReplyType, message: str, probability: float):
-    reply_type: ReplyType
-    message: str = ""
-    probability: float = 1.0
-
-def are_strings_similar(str1, str2, threshold=0.8):
-    similarity_ratio = SequenceMatcher(None, str1, str2).ratio()
-    return similarity_ratio >= threshold
+from utils import Reply, ReplyType, are_strings_similar
 
 class OmniBot(commands.Bot):
     def __init__(self, *args, **kwargs):
@@ -49,9 +30,6 @@ class OmniBot(commands.Bot):
         ]
 
         super().__init__(*args, **kwargs)
-
-        # register commands
-        self.add_command(commands.Command(self.ping_command, name="ping", description="The ping."))
 
     def get_reply(self) -> Reply:
         """
@@ -88,14 +66,3 @@ class OmniBot(commands.Bot):
                     print(f"replied (gif) to {ctx.message.author}: {ctx.message.content} (num:{replynum}/meme:{is_meme}/choice:{reply_choice})")
 
         await self.process_commands(message) # restore command capabilities
-
-    async def ping_command(self, ctx: commands.Context):
-        await ctx.reply(f"Pong! {round(self.latency, 4)}sec.")
-
-with open("token.json", "r") as f:
-    # Configure intents explicitly
-    intents = discord.Intents.default()
-    intents.message_content = True  # Enables reading message content
-
-    client = OmniBot(command_prefix="o!", intents=intents)
-    client.run(json.load(f)["token"])
