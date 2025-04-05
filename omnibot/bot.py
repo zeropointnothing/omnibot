@@ -43,7 +43,6 @@ class OmniBot(commands.Bot):
 
     async def on_message(self, message: Message):
         # print(f'Message from {message.author}: {message.content}')
-        ctx: commands.Context = await self.get_context(message)
 
         if (not message.author.bot and not message.is_system()) and not message.content.startswith(self.command_prefix):
             replynum = random.randint(self.rand_floor, self.rand_ceiling) # random trigger
@@ -54,16 +53,16 @@ class OmniBot(commands.Bot):
 
             if reply_choice.reply_type == ReplyType.MESSAGE:
                 if replynum >= self.rand_need or is_meme:
-                    await ctx.reply(reply_choice.message.format(
-                        user=ctx.message.author.name,
-                        user_caps=ctx.message.author.name.upper()
+                    await message.reply(reply_choice.message.format(
+                        user=message.author.name,
+                        user_caps=message.author.name.upper()
                     ))
 
-                    print(f"replied to {ctx.message.author}: {ctx.message.content} (num:{replynum}/meme:{is_meme}/choice:{reply_choice})")
+                    print(f"replied to {message.author}: {message.content} (num:{replynum}/meme:{is_meme}/choice:{reply_choice})")
             elif reply_choice.reply_type == ReplyType.GIF:
                 if replynum >= self.rand_need or is_meme:
-                    await ctx.reply(reply_choice.message)
+                    await message.reply(reply_choice.message)
 
-                    print(f"replied (gif) to {ctx.message.author}: {ctx.message.content} (num:{replynum}/meme:{is_meme}/choice:{reply_choice})")
+                    print(f"replied (gif) to {message.author}: {message.content} (num:{replynum}/meme:{is_meme}/choice:{reply_choice})")
 
         await self.process_commands(message) # restore command capabilities
