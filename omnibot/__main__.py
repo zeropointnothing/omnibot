@@ -1,3 +1,10 @@
+"""
+OmniBot
+
+Some stupid joke bot I made for the sillies.
+
+Also a test for better structured PyCord implementations.
+"""
 import json
 from commands import bot
 
