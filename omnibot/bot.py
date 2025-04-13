@@ -1,7 +1,9 @@
 import discord.ext.commands as commands
+import discord.ext.tasks as tasks
 import random
-from discord import Message
-from utils import Reply, ReplyType, are_strings_similar
+import discord
+import asyncio
+from utils import Reply, ReplyType, are_strings_similar, voice_once_done_callback, VoiceWatcher
 
 class OmniBot(commands.Bot):
     def __init__(self, *args, **kwargs):
@@ -29,6 +31,8 @@ class OmniBot(commands.Bot):
             "guess whos finally getting his powers"
         ]
 
+        self.connections: dict[str, VoiceWatcher] = {}
+
         super().__init__(*args, **kwargs)
 
     def get_reply(self) -> Reply:
@@ -39,9 +43,9 @@ class OmniBot(commands.Bot):
 
     async def on_ready(self):
         print(f'Logged on as {self.user}!')
-        print(self.prefixed_commands)
+        self.task_loop.start()
 
-    async def on_message(self, message: Message):
+    async def on_message(self, message: discord.Message):
         # print(f'Message from {message.author}: {message.content}')
 
         if (not message.author.bot and not message.is_system()) and not message.content.startswith(self.command_prefix):
@@ -66,3 +70,30 @@ class OmniBot(commands.Bot):
                     print(f"replied (gif) to {message.author}: {message.content} (num:{replynum}/meme:{is_meme}/choice:{reply_choice})")
 
         await self.process_commands(message) # restore command capabilities
+    
+    @tasks.loop(seconds=5)
+    async def task_loop(self):
+        print("Task Loop!")
+        for task in self.connections:
+            conn = self.connections[task]
+
+            if conn.channel.recording:
+                print(f"Toggling Connection: {conn} (recording:{conn.channel.recording})")
+                conn.processing = True
+                conn.channel.stop_recording()
+                print("Begin Processing!")
+
+            while True:
+                if conn.processing == False:
+                    break
+                print(f"waiting... {conn.processing}")
+                await asyncio.sleep(1)
+
+            conn.channel.start_recording(
+                discord.sinks.WaveSink(),
+                voice_once_done_callback,
+                conn.ctx.message.channel,
+                conn,
+                self
+            )
+
