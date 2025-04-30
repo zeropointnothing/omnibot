@@ -73,7 +73,7 @@ class OmniBot(commands.Bot):
     
     @tasks.loop(seconds=5)
     async def task_loop(self):
-        print("Task Loop!")
+        # print("Task Loop!")
         for task in self.connections:
             conn = self.connections[task]
 
