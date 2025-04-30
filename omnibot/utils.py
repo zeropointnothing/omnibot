@@ -52,7 +52,7 @@ async def voice_once_done_callback(sink: discord.sinks, channel: discord.TextCha
             try:
                 audio_data = r.record(source)
                 text = json.loads(r.recognize_vosk(audio_data, language="en-US"))
-                out.append(f"<@{user_id}> ({await bot.fetch_user(user_id)}): \"{text["text"]}\"")
+                out.append(f"<@{user_id}> ({await bot.fetch_user(user_id)}): \"{text['text']}\"")
 
                 if text:
                     reply_num = random.randint(bot.rand_floor, bot.rand_ceiling) # random trigger
